@@ -1,8 +1,6 @@
-// Fake database for demo purposes
 const users = [];
-let loggedInUser = null; // Tracks the currently logged-in user
+let loggedInUser = null;
 
-// DOM Elements
 const authSection = document.getElementById('authSection');
 const postSection = document.getElementById('postSection');
 const authTitle = document.getElementById('authTitle');
@@ -16,7 +14,6 @@ const postInput = document.getElementById('postInput');
 const postsContainer = document.getElementById('postsContainer');
 const logoutButton = document.getElementById('logoutButton');
 
-// Toggle Login and Signup
 toggleAuthButton.addEventListener('click', () => {
   if (authTitle.textContent === 'Welcome Back') {
     authTitle.textContent = 'Create an Account';
@@ -31,7 +28,6 @@ toggleAuthButton.addEventListener('click', () => {
   }
 });
 
-// Handle Login/Signup Form Submission
 authForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value;
@@ -58,7 +54,6 @@ authForm.addEventListener('submit', (e) => {
   authForm.reset();
 });
 
-// Handle Post Submission
 postForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const postText = postInput.value.trim();
@@ -73,19 +68,16 @@ postForm.addEventListener('submit', (e) => {
   }
 });
 
-// Handle Logout
 logoutButton.addEventListener('click', () => {
   loggedInUser = null;
   showAuthSection();
 });
 
-// Show Post Section
 function showPostSection() {
   authSection.classList.add('hidden');
   postSection.classList.remove('hidden');
 }
 
-// Show Auth Section
 function showAuthSection() {
   authSection.classList.remove('hidden');
   postSection.classList.add('hidden');
