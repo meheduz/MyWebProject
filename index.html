@@ -2,39 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anonymous Post Platform</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiniSocial</title>
+  <link rel="stylesheet" href="Styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
 <body>
-  <div class="wrapper">
-    <!-- Login and Signup Section -->
-    <div id="authSection" class="card">
-      <h1 id="authTitle">Welcome Back</h1>
-      <p id="authSubtitle">Login to continue</p>
-      <form id="authForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit" id="authButton">Login</button>
-      </form>
-      <p id="toggleText">Don't have an account? <button id="toggleAuthButton">Sign Up</button></p>
-    </div>
 
-    <!-- Anonymous Posting Section -->
-    <div id="postSection" class="hidden">
-      <div class="header">
-        <h1>Anonymous Feed</h1>
-        <button id="logoutButton" class="logout">Logout</button>
-      </div>
-      <form id="postForm" class="card">
-        <textarea id="postInput" placeholder="Share your thoughts..." required></textarea>
-        <button type="submit">Post</button>
-      </form>
-      <div id="postsContainer" class="feed">
-        <!-- Posts will appear here -->
-      </div>
-    </div>
+<div class="container">
+  <h1>MiniSocial</h1>
+
+  <div id="auth">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <input type="file" id="profilePic">
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Log In</button>
   </div>
-  <script src="script.js"></script>
+
+  <div id="postArea" style="display:none;">
+    <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+    <button onclick="createPost()">Post</button>
+    <button onclick="logout()">Logout</button>
+    <div id="feed"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>

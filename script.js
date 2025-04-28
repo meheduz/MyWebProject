@@ -1,84 +1,147 @@
-const users = [];
-let loggedInUser = null;
+// Your Firebase Config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_MSG_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-const authSection = document.getElementById('authSection');
-const postSection = document.getElementById('postSection');
-const authTitle = document.getElementById('authTitle');
-const authSubtitle = document.getElementById('authSubtitle');
-const authForm = document.getElementById('authForm');
-const authButton = document.getElementById('authButton');
-const toggleText = document.getElementById('toggleText');
-const toggleAuthButton = document.getElementById('toggleAuthButton');
-const postForm = document.getElementById('postForm');
-const postInput = document.getElementById('postInput');
-const postsContainer = document.getElementById('postsContainer');
-const logoutButton = document.getElementById('logoutButton');
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
-toggleAuthButton.addEventListener('click', () => {
-  if (authTitle.textContent === 'Welcome Back') {
-    authTitle.textContent = 'Create an Account';
-    authSubtitle.textContent = 'Sign up to get started';
-    authButton.textContent = 'Sign Up';
-    toggleText.innerHTML = 'Already have an account? <button id="toggleAuthButton">Login</button>';
-  } else {
-    authTitle.textContent = 'Welcome Back';
-    authSubtitle.textContent = 'Login to continue';
-    authButton.textContent = 'Login';
-    toggleText.innerHTML = 'Don\'t have an account? <button id="toggleAuthButton">Sign Up</button>';
+let currentUser = null;
+
+// Signup
+async function signup() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const profilePic = document.getElementById('profilePic').files[0];
+
+  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+  currentUser = userCredential.user;
+
+  let profilePicUrl = "";
+  if (profilePic) {
+    const storageRef = storage.ref(`profilePics/${currentUser.uid}`);
+    await storageRef.put(profilePic);
+    profilePicUrl = await storageRef.getDownloadURL();
   }
-});
 
-authForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+  await db.collection('users').doc(currentUser.uid).set({
+    email: email,
+    profilePicUrl: profilePicUrl
+  });
+
+  showPostArea();
+}
+
+// Login
+async function login() {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
-  if (authTitle.textContent === 'Welcome Back') {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      loggedInUser = user;
-      showPostSection();
-    } else {
-      alert('Invalid email or password!');
-    }
-  } else {
-    if (users.find(u => u.email === email)) {
-      alert('Email is already registered!');
-    } else {
-      users.push({ email, password });
-      alert('Account created successfully! Please log in.');
-      toggleAuthButton.click();
-    }
-  }
+  const userCredential = await auth.signInWithEmailAndPassword(email, password);
+  currentUser = userCredential.user;
 
-  authForm.reset();
-});
-
-postForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const postText = postInput.value.trim();
-
-  if (postText) {
-    const postElement = document.createElement('div');
-    postElement.className = 'post';
-    postElement.textContent = postText;
-
-    postsContainer.prepend(postElement);
-    postInput.value = '';
-  }
-});
-
-logoutButton.addEventListener('click', () => {
-  loggedInUser = null;
-  showAuthSection();
-});
-
-function showPostSection() {
-  authSection.classList.add('hidden');
-  postSection.classList.remove('hidden');
+  showPostArea();
 }
 
-function showAuthSection() {
-  authSection.classList.remove('hidden');
-  postSection.classList.add('hidden');
+// Logout
+function logout() {
+  auth.signOut();
+  location.reload();
+}
+
+// Show Post Area
+function showPostArea() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('postArea').style.display = 'block';
+  loadPostsRealtime();
+}
+
+// Create Post
+async function createPost() {
+  const content = document.getElementById('postContent').value;
+  const userDoc = await db.collection('users').doc(currentUser.uid).get();
+  const profilePicUrl = userDoc.data().profilePicUrl;
+
+  await db.collection('posts').add({
+    username: currentUser.email,
+    content: content,
+    profilePicUrl: profilePicUrl,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    comments: []
+  });
+
+  document.getElementById('postContent').value = '';
+}
+
+// Load Posts Realtime
+function loadPostsRealtime() {
+  db.collection('posts')
+    .orderBy('timestamp', 'desc')
+    .onSnapshot(snapshot => {
+      const feed = document.getElementById('feed');
+      feed.innerHTML = "";
+      snapshot.forEach(doc => {
+        const post = doc.data();
+        feed.innerHTML += renderPost(doc.id, post);
+      });
+    });
+}
+
+// Render Post HTML
+function renderPost(id, post) {
+  let likesCount = post.likes.length;
+  let commentsHtml = post.comments.map(c => `<div><b>${c.email}:</b> ${c.text}</div>`).join('');
+
+  return `
+    <div class="post">
+      <img src="${post.profilePicUrl}" class="profile"> <b>${post.username}</b><br><br>
+      ${post.content}<br><br>
+      <button onclick="likePost('${id}')">❤️ ${likesCount}</button>
+      <div>
+        <input id="commentInput-${id}" placeholder="Write a comment...">
+        <button onclick="addComment('${id}')">Comment</button>
+      </div>
+      <div>${commentsHtml}</div>
+    </div>
+  `;
+}
+
+// Like Post
+async function likePost(postId) {
+  const postRef = db.collection('posts').doc(postId);
+  const postDoc = await postRef.get();
+  let likes = postDoc.data().likes;
+
+  if (likes.includes(currentUser.email)) {
+    likes = likes.filter(email => email !== currentUser.email);
+  } else {
+    likes.push(currentUser.email);
+  }
+
+  await postRef.update({ likes: likes });
+}
+
+// Add Comment
+async function addComment(postId) {
+  const commentInput = document.getElementById(`commentInput-${postId}`);
+  const text = commentInput.value;
+
+  if (text.trim() !== "") {
+    const postRef = db.collection('posts').doc(postId);
+    const postDoc = await postRef.get();
+    let comments = postDoc.data().comments;
+
+    comments.push({ email: currentUser.email, text: text });
+
+    await postRef.update({ comments: comments });
+    commentInput.value = '';
+  }
 }

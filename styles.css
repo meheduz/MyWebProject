@@ -1,96 +1,174 @@
-body {
+/* Reset */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f2f5;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: #fff;
+  padding: 20px;
 }
 
-.wrapper {
+.container {
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
-}
-
-.card {
+  max-width: 500px;
   background: #fff;
-  color: #333;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
   margin-bottom: 20px;
+  color: #1877f2;
 }
 
-.hidden {
-  display: none;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input, textarea {
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-textarea {
-  resize: none;
-  height: 100px;
-}
-
-button {
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #2575fc;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #1a5fbf;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.logout {
-  background: #f44336;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.logout:hover {
-  background: #d32f2f;
-}
-
-.feed {
+/* Auth Area */
+#auth {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+#auth input[type="email"],
+#auth input[type="password"],
+#auth input[type="file"] {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+#auth button {
+  background: #1877f2;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#auth button:hover {
+  background: #155ab6;
+}
+
+/* Post Area */
+#postArea {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+}
+
+#postArea button {
+  background: #42b72a;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#postArea button:hover {
+  background: #369723;
+}
+
+/* Feed Posts */
 .post {
-  background: #f4f4f4;
-  color: #333;
-  border-radius: 5px;
+  background: #fff;
+  border: 1px solid #ddd;
   padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+img.profile {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-content {
+  margin-bottom: 10px;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+button.like-btn, button.comment-btn {
+  background: transparent;
+  border: none;
+  color: #606770;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.like-btn:hover, button.comment-btn:hover {
+  color: #1877f2;
+}
+
+/* Comment input */
+.comment-area {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.comment-area input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.comment-area button {
+  padding: 8px 12px;
+  background: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.comment-area button:hover {
+  background: #155ab6;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  textarea {
+    height: 80px;
+  }
 }
