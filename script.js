@@ -1,147 +1,99 @@
-// Your Firebase Config
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_MSG_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+function renderPost(postData, postId) {
+  const feed = document.getElementById("feed");
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
+  // Create post container
+  const postDiv = document.createElement("div");
+  postDiv.className = "post";
+  postDiv.id = postId;
 
-let currentUser = null;
+  // Post Header (Profile Pic + Username)
+  const headerDiv = document.createElement("div");
+  headerDiv.className = "post-header";
 
-// Signup
-async function signup() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const profilePic = document.getElementById('profilePic').files[0];
+  const profileImg = document.createElement("img");
+  profileImg.src = postData.profilePicture || "default-profile.png"; // fallback image
+  profileImg.className = "profile";
 
-  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-  currentUser = userCredential.user;
+  const userName = document.createElement("b");
+  userName.textContent = postData.username;
 
-  let profilePicUrl = "";
-  if (profilePic) {
-    const storageRef = storage.ref(`profilePics/${currentUser.uid}`);
-    await storageRef.put(profilePic);
-    profilePicUrl = await storageRef.getDownloadURL();
-  }
+  headerDiv.appendChild(profileImg);
+  headerDiv.appendChild(userName);
 
-  await db.collection('users').doc(currentUser.uid).set({
-    email: email,
-    profilePicUrl: profilePicUrl
-  });
+  // Post Content (Text)
+  const contentDiv = document.createElement("div");
+  contentDiv.className = "post-content";
+  contentDiv.textContent = postData.content;
 
-  showPostArea();
+  // Actions (Like / Comment buttons)
+  const actionsDiv = document.createElement("div");
+  actionsDiv.className = "post-actions";
+
+  const likeBtn = document.createElement("button");
+  likeBtn.className = "like-btn";
+  likeBtn.innerHTML = `❤️ Like (${postData.likes || 0})`;
+
+  likeBtn.onclick = () => likePost(postId);
+
+  const commentBtn = document.createElement("button");
+  commentBtn.className = "comment-btn";
+  commentBtn.innerHTML = "💬 Comment";
+
+  commentBtn.onclick = () => toggleCommentInput(postId);
+
+  actionsDiv.appendChild(likeBtn);
+  actionsDiv.appendChild(commentBtn);
+
+  // Comment Section (Hidden by default)
+  const commentArea = document.createElement("div");
+  commentArea.className = "comment-area";
+  commentArea.style.display = "none"; // hidden initially
+
+  const commentInput = document.createElement("input");
+  commentInput.type = "text";
+  commentInput.placeholder = "Write a comment...";
+
+  const commentSubmitBtn = document.createElement("button");
+  commentSubmitBtn.textContent = "Post";
+  commentSubmitBtn.onclick = () => submitComment(postId, commentInput.value);
+
+  commentArea.appendChild(commentInput);
+  commentArea.appendChild(commentSubmitBtn);
+
+  // Combine all parts
+  postDiv.appendChild(headerDiv);
+  postDiv.appendChild(contentDiv);
+  postDiv.appendChild(actionsDiv);
+  postDiv.appendChild(commentArea);
+
+  // Add to top of feed
+  feed.prepend(postDiv);
 }
 
-// Login
-async function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  const userCredential = await auth.signInWithEmailAndPassword(email, password);
-  currentUser = userCredential.user;
-
-  showPostArea();
-}
-
-// Logout
-function logout() {
-  auth.signOut();
-  location.reload();
-}
-
-// Show Post Area
-function showPostArea() {
-  document.getElementById('auth').style.display = 'none';
-  document.getElementById('postArea').style.display = 'block';
-  loadPostsRealtime();
-}
-
-// Create Post
-async function createPost() {
-  const content = document.getElementById('postContent').value;
-  const userDoc = await db.collection('users').doc(currentUser.uid).get();
-  const profilePicUrl = userDoc.data().profilePicUrl;
-
-  await db.collection('posts').add({
-    username: currentUser.email,
-    content: content,
-    profilePicUrl: profilePicUrl,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    likes: [],
-    comments: []
-  });
-
-  document.getElementById('postContent').value = '';
-}
-
-// Load Posts Realtime
-function loadPostsRealtime() {
-  db.collection('posts')
-    .orderBy('timestamp', 'desc')
-    .onSnapshot(snapshot => {
-      const feed = document.getElementById('feed');
-      feed.innerHTML = "";
-      snapshot.forEach(doc => {
-        const post = doc.data();
-        feed.innerHTML += renderPost(doc.id, post);
-      });
-    });
-}
-
-// Render Post HTML
-function renderPost(id, post) {
-  let likesCount = post.likes.length;
-  let commentsHtml = post.comments.map(c => `<div><b>${c.email}:</b> ${c.text}</div>`).join('');
-
-  return `
-    <div class="post">
-      <img src="${post.profilePicUrl}" class="profile"> <b>${post.username}</b><br><br>
-      ${post.content}<br><br>
-      <button onclick="likePost('${id}')">❤️ ${likesCount}</button>
-      <div>
-        <input id="commentInput-${id}" placeholder="Write a comment...">
-        <button onclick="addComment('${id}')">Comment</button>
-      </div>
-      <div>${commentsHtml}</div>
-    </div>
-  `;
-}
-
-// Like Post
-async function likePost(postId) {
-  const postRef = db.collection('posts').doc(postId);
-  const postDoc = await postRef.get();
-  let likes = postDoc.data().likes;
-
-  if (likes.includes(currentUser.email)) {
-    likes = likes.filter(email => email !== currentUser.email);
+// Helper to toggle comment box
+function toggleCommentInput(postId) {
+  const postDiv = document.getElementById(postId);
+  const commentArea = postDiv.querySelector(".comment-area");
+  if (commentArea.style.display === "none") {
+    commentArea.style.display = "flex";
   } else {
-    likes.push(currentUser.email);
+    commentArea.style.display = "none";
   }
-
-  await postRef.update({ likes: likes });
 }
 
-// Add Comment
-async function addComment(postId) {
-  const commentInput = document.getElementById(`commentInput-${postId}`);
-  const text = commentInput.value;
+// Helper to like a post (simple example)
+function likePost(postId) {
+  const postDiv = document.getElementById(postId);
+  const likeBtn = postDiv.querySelector(".like-btn");
+  // Update likes (in a real app, also update Firestore)
+  let currentLikes = parseInt(likeBtn.innerText.match(/\d+/)[0]);
+  currentLikes++;
+  likeBtn.innerHTML = `❤️ Like (${currentLikes})`;
+}
 
-  if (text.trim() !== "") {
-    const postRef = db.collection('posts').doc(postId);
-    const postDoc = await postRef.get();
-    let comments = postDoc.data().comments;
-
-    comments.push({ email: currentUser.email, text: text });
-
-    await postRef.update({ comments: comments });
-    commentInput.value = '';
-  }
+// Helper to submit comment (simple example)
+function submitComment(postId, commentText) {
+  if (commentText.trim() === "") return;
+  alert(`Comment submitted: ${commentText}`);
+  // In a real app, push comment to Firestore under postId
 }
