@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MiniSocial</title>
-  <link rel="stylesheet" href="Styles.css">
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -18,20 +13,25 @@
   <div id="auth">
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <input type="file" id="profilePic">
-    <button onclick="signup()">Sign Up</button>
-    <button onclick="login()">Log In</button>
+    <div id="authButtons">
+      <button onclick="signUp()">Sign Up</button>
+      <button onclick="login()">Login</button>
+    </div>
+    <button id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+    <div id="authStatus"></div>
   </div>
 
   <div id="postArea" style="display:none;">
     <textarea id="postContent" placeholder="What's on your mind?"></textarea>
     <button onclick="createPost()">Post</button>
-    <button onclick="logout()">Logout</button>
-    <div id="feed"></div>
+    <div id="postStatus"></div>
+  </div>
+
+  <div id="feed">
+    <div id="loading" style="display:none;">Loading posts...</div>
   </div>
 </div>
 
-<script src="script.js"></script>
-
+<script type="module" src="script.js"></script>
 </body>
 </html>

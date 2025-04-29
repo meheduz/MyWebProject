@@ -1,174 +1,42 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Add these to your existing styles.css */
+
+#authStatus, #postStatus {
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: none;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+#authStatus.error, #postStatus.error {
+  background-color: #ffebee;
+  color: #c62828;
+  display: block;
 }
 
-.container {
-  width: 100%;
-  max-width: 500px;
-  background: #fff;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+#authStatus.success, #postStatus.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  display: block;
 }
 
-h1 {
+#loading {
   text-align: center;
-  margin-bottom: 20px;
-  color: #1877f2;
-}
-
-/* Auth Area */
-#auth {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-#auth input[type="email"],
-#auth input[type="password"],
-#auth input[type="file"] {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-#auth button {
-  background: #1877f2;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-#auth button:hover {
-  background: #155ab6;
-}
-
-/* Post Area */
-#postArea {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-textarea {
-  width: 100%;
-  height: 100px;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
-}
-
-#postArea button {
-  background: #42b72a;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-#postArea button:hover {
-  background: #369723;
-}
-
-/* Feed Posts */
-.post {
-  background: #fff;
-  border: 1px solid #ddd;
   padding: 15px;
-  border-radius: 12px;
-  margin-top: 15px;
+  color: #666;
 }
 
-img.profile {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
+/* Profile upload styles */
+#profileUpload {
+  display: none;
 }
 
-.post-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.post-content {
-  margin-bottom: 10px;
-}
-
-.post-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-button.like-btn, button.comment-btn {
-  background: transparent;
-  border: none;
-  color: #606770;
-  font-weight: bold;
+.profile-upload-label {
+  display: inline-block;
   cursor: pointer;
+  margin-left: 10px;
 }
 
-button.like-btn:hover, button.comment-btn:hover {
+.profile-upload-label:hover {
+  text-decoration: underline;
   color: #1877f2;
-}
-
-/* Comment input */
-.comment-area {
-  display: flex;
-  gap: 5px;
-  margin-top: 5px;
-}
-
-.comment-area input {
-  flex-grow: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.comment-area button {
-  padding: 8px 12px;
-  background: #1877f2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.comment-area button:hover {
-  background: #155ab6;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px 15px;
-  }
-
-  textarea {
-    height: 80px;
-  }
 }
