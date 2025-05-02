@@ -1,4 +1,41 @@
-/* Add these to your existing styles.css */
+body {
+  font-family: sans-serif;
+  background: #f5f5f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+input, textarea, button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #1877f2;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #155db2;
+}
 
 #authStatus, #postStatus {
   padding: 10px;
@@ -25,18 +62,75 @@
   color: #666;
 }
 
-/* Profile upload styles */
-#profileUpload {
-  display: none;
+.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
 }
 
-.profile-upload-label {
-  display: inline-block;
-  cursor: pointer;
-  margin-left: 10px;
+.post {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.profile-upload-label:hover {
-  text-decoration: underline;
-  color: #1877f2;
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-content {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.post-image {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+#postPreview {
+  margin-top: 10px;
+  font-style: italic;
+  color: #555;
+}
+
+#darkModeToggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.dark-mode {
+  background: #121212;
+  color: #eee;
+}
+
+.dark-mode .container {
+  background: #1e1e1e;
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode button {
+  background: #333;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+.dark-mode .post {
+  background: #1f1f1f;
+  border-color: #333;
 }
