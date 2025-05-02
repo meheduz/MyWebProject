@@ -1,37 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MiniSocial</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-<div class="container">
-  <h1>MiniSocial</h1>
-
-  <div id="auth">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <div id="authButtons">
-      <button onclick="signUp()">Sign Up</button>
-      <button onclick="login()">Login</button>
+  <div id="authPage">
+    <div class="container">
+      <h1>MiniSocial</h1>
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <div id="authButtons">
+        <button onclick="signUp()">Sign Up</button>
+        <button onclick="login()">Login</button>
+      </div>
+      <input type="file" id="profilePicInput" onchange="handleProfilePicUpload(event)" />
+      <div id="authStatus"></div>
     </div>
-    <button id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
-    <div id="authStatus"></div>
   </div>
 
-  <div id="postArea" style="display:none;">
-    <textarea id="postContent" placeholder="What's on your mind?"></textarea>
-    <button onclick="createPost()">Post</button>
-    <div id="postStatus"></div>
+  <div id="homePage" style="display:none">
+    <button id="darkModeToggle">Toggle Dark Mode</button>
+    <div class="container">
+      <h1>MiniSocial</h1>
+      <button id="logoutBtn" onclick="logout()">Logout</button>
+      <input type="text" id="searchInput" placeholder="Search posts..." oninput="filterPosts()" />
+
+      <div id="postArea">
+        <textarea id="postContent" maxlength="300" placeholder="What's on your mind?" oninput="previewPost()"></textarea>
+        <input type="file" id="imageUpload" accept="image/*" />
+        <div id="postPreview"></div>
+        <button onclick="createPost()">Post</button>
+        <div id="postStatus"></div>
+      </div>
+
+      <h2>Feed</h2>
+      <div id="feed">
+        <div id="loading" style="display: none">Loading posts...</div>
+      </div>
+    </div>
   </div>
 
-  <div id="feed">
-    <div id="loading" style="display:none;">Loading posts...</div>
-  </div>
-</div>
-
-<script type="module" src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
